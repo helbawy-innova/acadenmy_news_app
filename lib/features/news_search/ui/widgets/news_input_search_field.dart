@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class NewsSearchInputField extends StatelessWidget {
-  NewsSearchInputField({super.key, required this.onChanged});
+  NewsSearchInputField({super.key, required this.onChanged, required this.searchController});
 
   final Function(String) onChanged;
   Timer? timer;
+  TextEditingController searchController;
 
   @override
   Widget build(BuildContext context) {

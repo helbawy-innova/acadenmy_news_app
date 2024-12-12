@@ -1,3 +1,19 @@
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
+import 'dart:developer';
+
 import 'package:base/network/app_end_points.dart';
 import 'package:dio/dio.dart';
 
@@ -8,6 +24,27 @@ class NetworkHandler {
 
   NetworkHandler._internal() {
     dio.options.baseUrl = AppEndPoints.baseUrl;
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          log("==: Method => ${options.method}");
+          log("==: Headers => ${options.headers}");
+          log('==: Request => ${options.uri}');
+          log('==: Request Body => ${options.data}');
+          log("==: Request Query => ${options.queryParameters}");
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          log('==: {${response.realUri.path}} Response => ${response.data}');
+          return handler.next(response);
+        },
+        onError: (DioError e, handler) {
+          log('==: Error => ${e.message}');
+          log('==: Error Response => ${e.response?.data}');
+          return handler.next(e);
+        },
+      ),
+    );
     dio.options.headers = {
       "Accept": "application/json",
     };

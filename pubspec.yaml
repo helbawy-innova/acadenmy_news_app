@@ -40,10 +40,7 @@ dependencies:
   intl: ^0.19.0
   image_picker: ^1.1.2
   file_picker: ^8.1.4
-<<<<<<< HEAD
   dio: ^5.7.0
-=======
->>>>>>> 851c47f92adbd238124b62b3f65b5d9ea18935bb
 
 dev_dependencies:
   flutter_test:

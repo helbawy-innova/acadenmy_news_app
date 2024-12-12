@@ -27,15 +27,16 @@ class NewsSearchScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: NewsSearchInputField(
-
+              searchController: context.read<NewsSearchCubit>().searchController,
               onChanged: (value) {
-                BlocProvider.of<NewsSearchCubit>(context).searchNews(value);
+                BlocProvider.of<NewsSearchCubit>(context).searchNews();
               },
             ),
           ),
           //============================== News List View ==============================
           Expanded(
             child: BlocBuilder<NewsSearchCubit, AppStates>(
+              buildWhen: (previous, current) => !(current is LoadingState && current.type == "paginating"),
               builder: (context, state) {
                 if (state is LoadingState) {
                   return const Center(child: CircularProgressIndicator());
@@ -43,20 +44,32 @@ class NewsSearchScreen extends StatelessWidget {
                   return const Center(child: Text("No Data Found"));
                 } else if (state is ErrorState) {
                   return const Center(child: Text("Something went wrong"));
-                }
-                else if (state is LoadedState) {
+                } else if (state is LoadedState) {
                   var newsList = (state.data);
                   return ListView.builder(
                     itemCount: newsList.length,
+                    controller: context.read<NewsSearchCubit>().scrollController,
                     itemBuilder: (context, index) {
                       return NewsCardView(newsModel: newsList[index]);
                     },
                   );
-                }
-                else return const SizedBox();
+                } else
+                  return const SizedBox();
               },
             ),
           ),
+          Center(
+            child: BlocBuilder<NewsSearchCubit, AppStates>(
+              builder: (context, state) {
+                return AnimatedCrossFade(
+                  firstChild: SizedBox(width: double.infinity, height: 50, child: Center(child: const CircularProgressIndicator())),
+                  secondChild: SizedBox(),
+                  crossFadeState: state is LoadingState && state.type == "paginating"? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                  duration: Duration(milliseconds: 500),
+                );
+              },
+            ),
+          )
         ],
       ),
     );
